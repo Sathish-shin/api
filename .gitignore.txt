@@ -1,0 +1,38 @@
+# Python bytecode files
+*.pyc
+*.pyo
+__pycache__
+
+# Virtual environment folder
+.venv/
+env/
+venv/
+
+# Flask-specific files
+instance/
+*.db
+*.sqlite
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# IDE/editor-specific files
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Log files
+*.log
+
+# Coverage reports
+.coverage
+*.cover
+
+# Temporary files
+*.bak
+*.swp
+
+# Render-specific
+render.yaml
