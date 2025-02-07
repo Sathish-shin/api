@@ -5,7 +5,7 @@ import os
 app = Flask(__name__)
 
 # Define the folder to store uploaded files
-UPLOAD_FOLDER = './API'
+UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER', './API')  # You can set this in environment variables
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Ensure the upload folder exists
@@ -47,4 +47,4 @@ def upload_file():
 
 # Run the app
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False, host='0.0.0.0')
