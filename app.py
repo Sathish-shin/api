@@ -20,7 +20,7 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Endpoint for file upload (POST method)
-@app.route('/API/', methods=['POST'])
+@app.route('/API/weather', methods=['POST'])
 def upload_file():
     # Check if 'file' is part of the request
     if 'file' not in request.files:
@@ -46,7 +46,7 @@ def upload_file():
         return jsonify({"error": "File type not allowed"}), 400
 
 # Endpoint to list uploaded files (GET method)
-@app.route('/API/', methods=['GET'])
+@app.route('/API/weather', methods=['GET'])
 def list_files():
     files = os.listdir(app.config['UPLOAD_FOLDER'])
     return jsonify({"files": files}), 200
