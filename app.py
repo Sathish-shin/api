@@ -1,12 +1,11 @@
-import os
-import requests
 from flask import Flask, request, jsonify
+import os
 
 # Initialize Flask app
 app = Flask(__name__)
 
 # Define the folder to store uploaded files
-UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER', './API')  # You can set this in environment variables
+UPLOAD_FOLDER = './API'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Ensure the upload folder exists
@@ -14,30 +13,30 @@ if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
 # Define allowed file extensions
-ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif', 'txt', 'pdf'}
+ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif', 'txt', 'pdf', 'json'}
 
 # Function to check if file extension is allowed
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# Root route to avoid 404 errors
-@app.route('/')
-def home():
-    return jsonify({"message": "Welcome to the Flask API!"})
-
-# Endpoint for file upload
-@app.route('/API', methods=['POST'])
+# Endpoint for file upload (POST method)
+@app.route('/API/', methods=['POST'])
 def upload_file():
+    # Check if 'file' is part of the request
     if 'file' not in request.files:
         return jsonify({"error": "No file part"}), 400
     
     file = request.files['file']
     
+    # Check if a file was selected
     if file.filename == '':
         return jsonify({"error": "No selected file"}), 400
     
+    # Check if the file type is allowed
     if file and allowed_file(file.filename):
+        # Define the file path to save the file
         filename = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+        # Save the file
         file.save(filename)
         return jsonify({
             "message": "File uploaded successfully!",
@@ -46,33 +45,13 @@ def upload_file():
     else:
         return jsonify({"error": "File type not allowed"}), 400
 
-# New Endpoint for weather data
-@app.route('/weather', methods=['GET'])
-def get_weather():
-    city_name = request.args.get('city')
-    if not city_name:
-        return jsonify({"error": "City parameter is required"}), 400
-    
-    API_KEY = "https://api-84ds.onrender.com"  # Replace with your OpenWeatherMap API key
-    url = f"http://api.openweathermap.org/data/2.5/weather?q={city_name}&appid={API_KEY}"
-    
-    try:
-        response = requests.get(url)
-        data = response.json()
-        
-        if data["cod"] != 200:
-            return jsonify({"error": data.get("message", "Error fetching weather data")}), 400
-        
-        return jsonify({
-            "city": data["name"],
-            "weather": data["weather"][0]["description"],
-            "temperature": data["main"]["temp"] - 273.15,  # Convert Kelvin to Celsius
-            "wind_speed": data["wind"]["speed"]
-        }), 200
-    except requests.exceptions.RequestException as e:
-        return jsonify({"error": str(e)}), 500
+# Endpoint to list uploaded files (GET method)
+@app.route('/API/', methods=['GET'])
+def list_files():
+    files = os.listdir(app.config['UPLOAD_FOLDER'])
+    return jsonify({"files": files}), 200
 
-# Run the app with Render's assigned port
+# Run the app
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))  # Use Render’s assigned port or default to 5000
-    app.run(debug=False, host='0.0.0.0', port=port)
+    print(f"Files will be uploaded to: {UPLOAD_FOLDER}")
+    app.run(debug=True)
