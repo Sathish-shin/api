@@ -53,7 +53,7 @@ def get_weather():
     if not city_name:
         return jsonify({"error": "City parameter is required"}), 400
     
-    API_KEY = "your_api_key_here"  # Replace with your OpenWeatherMap API key
+    API_KEY = "https://api-84ds.onrender.com"  # Replace with your OpenWeatherMap API key
     url = f"http://api.openweathermap.org/data/2.5/weather?q={city_name}&appid={API_KEY}"
     
     try:
