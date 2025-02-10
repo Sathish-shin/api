@@ -46,7 +46,7 @@ def upload_file():
         return jsonify({"error": "File type not allowed"}), 400
 
 # Endpoint to list uploaded files (GET method)
-@app.route('/API/weather', methods=['GET'])
+@app.route('/weather', methods=['GET'])
 def list_files():
     files = os.listdir(app.config['UPLOAD_FOLDER'])
     return jsonify({"files": files}), 200
