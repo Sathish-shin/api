@@ -20,6 +20,11 @@ ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif', 'txt', 'pdf'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+# Root route to avoid 404 errors
+@app.route('/')
+def home():
+    return jsonify({"message": "Welcome to the Flask API!"})
+
 # Endpoint for file upload
 @app.route('/API', methods=['POST'])
 def upload_file():
@@ -67,6 +72,7 @@ def get_weather():
     except requests.exceptions.RequestException as e:
         return jsonify({"error": str(e)}), 500
 
-# Run the app
+# Run the app with Render's assigned port
 if __name__ == '__main__':
-    app.run(debug=False, host='0.0.0.0')
+    port = int(os.environ.get('PORT', 5000))  # Use Render’s assigned port or default to 5000
+    app.run(debug=False, host='0.0.0.0', port=port)
